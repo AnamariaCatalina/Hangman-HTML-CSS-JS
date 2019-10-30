@@ -24,6 +24,8 @@
     "lime"
   ];
 
+  console.log(`ceva`);
+
   let randomWord = ""; // contains a random word from the vector words
 
   let oldWordWithLines = []; // memorize the secvention of buttons which were pressed in order to count the mistakes
