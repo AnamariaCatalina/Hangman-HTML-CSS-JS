@@ -3,11 +3,11 @@
   const reset = document.querySelector(".reset");
   const hint = document.querySelector(".hint");
   const word = document.querySelector(".word");
-  const PuessLetter = document.querySelectorAll(".guessLetter button");
+  const guessLetter = document.querySelectorAll(".guessLetter button");
   const image = document.querySelector(".underHangmanImage img");
   const wrongChoises = document.querySelector(".wrongChoisesRow p");
   const score = document.querySelector(".score ");
-  // const time = document.querySelector(".timer");
+  const time = document.querySelector(".timer");
 
   const words = [
     // vector with random words
@@ -24,8 +24,6 @@
     "lime"
   ];
 
-  console.log(`ceva`);
-
   let randomWord = ""; // contains a random word from the vector words
 
   let oldWordWithLines = []; // memorize the secvention of buttons which were pressed in order to count the mistakes
@@ -35,11 +33,38 @@
   let nrOfPressHintButton = 0; //how many times the hint button has been pressed
   let scoreValue = 0;
 
+  time.textContent = `Timer: 00:00`;
+  duration = 120;
+  let interval;
+
+  function startTimer(duration) {
+    var timer = duration,
+      minutes,
+      seconds;
+    interval = setInterval(function() {
+      minutes = parseInt(timer / 60, 10);
+      seconds = parseInt(timer % 60, 10);
+
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
+
+      time.textContent = "Timer:" + minutes + ":" + seconds;
+
+      if (--timer < 0) {
+        timer = duration;
+      }
+    }, 1000);
+  }
+
+  // function stopTimer() {
+  //   duration = 0;
+  //   startTimer(duration).destroy = true;
+  //   // time.textContent = "Timer: 00:00";
+  // }
+
   function generateRandomWord() {
     randomWord = words[Math.floor(Math.random() * words.length)];
     word.textContent = randomWord;
-
-    return randomWord;
   }
 
   function enableLetterButtons() {
@@ -75,7 +100,7 @@
 
   start.addEventListener("click", () => {
     transformWordIntoLines();
-    console.log(randomWord);
+    console.log(`The word is: ${randomWord}`);
 
     enableLetterButtons();
     hint.disabled = false;
@@ -86,7 +111,7 @@
 
     nrOfPressHintButton = 0;
 
-    // timer();
+    startTimer(60 * 2);
   });
 
   guessLetter.forEach(buton => {
@@ -137,8 +162,9 @@
     });
   });
 
+  // checking if the guessed word is correct
   function checkWord() {
-    if (correctWordWithLines.join("") === randomWord) {
+    if (word.textContent === randomWord) {
       transformWordIntoLines();
       console.log(`randomword este: ${randomWord}`);
 
@@ -159,6 +185,7 @@
     }
   }
 
+  // reset the game when the reset button is pressed
   reset.addEventListener("click", () => {
     restartGame();
     disableLetterButtons();
@@ -171,6 +198,7 @@
     nrOfPressHintButton = 0;
   });
 
+  //restart game
   function restartGame() {
     start.style.display = "";
     word.textContent = "Let's Play!";
@@ -188,15 +216,21 @@
 
     scoreValue = 0;
     score.textContent = "Score: " + `${scoreValue}`;
+
+    clearInterval(interval);
+    time.textContent = `Timer: 00:00`;
   }
 
   hint.addEventListener("click", () => {
     let positionOfLinesIntoTheWord = []; //all the positions of the undiscovered letters (still with line)
     let j = 0; // index for positionOfLinesIntoTheWord
     let randomLetterFromWord; // random letter which were not discovered
+    correctWordWithLines = word.textContent.split("");
+
+    checkHintPressAvailability(scoreValue);
 
     for (let i = 0; i < correctWordWithLines.length; i++) {
-      if (correctWordWithLines[i] === "-") {
+      if (word.textContent[i] === "-") {
         positionOfLinesIntoTheWord[j] = i; //we memorize the positions of the lines into the current word displayed with lines
         j++;
       }
@@ -227,18 +261,34 @@
 
     nrOfPressHintButton++;
 
-    if (nrOfPressHintButton === randomWord.length / 2) {
+    scoreValue = scoreValue - 2;
+    score.textContent = "Score: " + scoreValue + "  ";
+
+    checkHintPresses(nrOfPressHintButton);
+    checkWord();
+  });
+
+  // checking how many times the hint button has been pressed
+  function checkHintPresses(nrOfPressHintButton) {
+    if (nrOfPressHintButton === parseInt(randomWord.length / 2 + 1)) {
       setTimeout(() => {
         alert("You pressed the maximum number of hints!");
       }, 500);
 
       hint.disabled = true;
       nrOfPressHintButton = 0;
+
+      // stopTimer();
     }
+  }
 
-    scoreValue = scoreValue - 2;
-    score.textContent = "Score: " + scoreValue + "  ";
-
-    checkWord();
-  });
+  //checking if the player has enough points to press the hint button
+  function checkHintPressAvailability(scoreValue) {
+    if (scoreValue <= 0) {
+      setTimeout(() => {
+        alert("You don't have enough points to press HINT!");
+        hint.disabled = true;
+      }, 100);
+    }
+  }
 })();
