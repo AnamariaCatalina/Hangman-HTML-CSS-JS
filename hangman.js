@@ -34,7 +34,7 @@
   let scoreValue = 0;
 
   time.textContent = `Timer: 00:00`;
-  duration = 12;
+  duration = 120;
   let interval;
 
   disableLetterButtons();
