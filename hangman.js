@@ -34,7 +34,7 @@
   let scoreValue = 0;
 
   time.textContent = `Timer: 00:00`;
-  duration = 120;
+  duration = 12;
   let interval;
 
   disableLetterButtons();
@@ -92,7 +92,6 @@
       image.src = `./images/${numberOfWrongLetters}.png`;
 
       checkNumberOfWrongLetters();
-
       checkWord();
     });
   });
@@ -115,8 +114,6 @@
     let j = 0; // index for positionOfLinesIntoTheWord
     let randomLetterFromWord; // random letter which were not discovered
     correctWordWithLines = word.textContent.split("");
-
-    console.log(`scoreValue: ${scoreValue}`);
 
     checkHintPresses(nrOfPressHintButton);
 
@@ -194,6 +191,10 @@
 
       if (--timer < 0) {
         timer = duration;
+      }
+      if (timer === 0) {
+        alert(`End of the game! Your score is: ${scoreValue}`);
+        restartGame();
       }
     }, 1000);
   }
