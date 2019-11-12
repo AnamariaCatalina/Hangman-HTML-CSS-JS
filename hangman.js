@@ -3,14 +3,14 @@
   const reset = document.querySelector(".reset");
   const hint = document.querySelector(".hint");
   const word = document.querySelector(".word");
-  const guessLetter = document.querySelectorAll(".guessLetter button");
+  const guessLetter = document.querySelectorAll(".letters button"); ///modifica aici ca nu mai merge
   const image = document.querySelector(".underHangmanImage img");
   const wrongChoises = document.querySelector(".wrongChoisesRow p");
   const score = document.querySelector(".score ");
   const time = document.querySelector(".timer");
 
   const words = [
-    // vector with random words
+    // array with random words
     "house",
     "pool",
     "chicken",
@@ -39,6 +39,8 @@
 
   disableLetterButtons();
 
+  console.log(`a trecut de disable`);
+
   start.addEventListener("click", () => {
     transformWordIntoLines(); //when the start button is pressed, the generated word is transformed into lines and printed on the screen
     console.log(`The word is: ${randomWord}`);
@@ -55,15 +57,15 @@
     startTimer(duration);
   });
 
-  guessLetter.forEach(buton => {
-    buton.addEventListener("click", () => {
+  guessLetter.forEach(button => {
+    button.addEventListener("click", () => {
       let actualWord = randomWord.split("");
       correctWordWithLines = word.textContent.split("");
 
       let correctChoise = false; //initial we consider that the pressed button is wrong
 
       for (let i = 0; i < actualWord.length; i++) {
-        if (actualWord[i] === buton.textContent) {
+        if (actualWord[i] === button.textContent) {
           correctWordWithLines[i] = actualWord[i];
           word.textContent = correctWordWithLines.join("");
 
@@ -71,20 +73,20 @@
         }
       }
 
-      buton.disabled = true;
-      buton.style.backgroundImage = "url('./images/empty.png')";
+      button.disabled = true;
+      button.style.backgroundImage = "url('./images/empty.png')";
 
       if (correctChoise === true) {
-        newWordWithLines = newWordWithLines + buton.textContent;
-        oldWordWithLines = oldWordWithLines + buton.textContent;
+        newWordWithLines = newWordWithLines + button.textContent;
+        oldWordWithLines = oldWordWithLines + button.textContent;
       } else {
-        newWordWithLines = newWordWithLines + buton.textContent;
+        newWordWithLines = newWordWithLines + button.textContent;
       }
 
       if (newWordWithLines !== oldWordWithLines) {
         numberOfWrongLetters++;
         wrongChoises.textContent =
-          wrongChoises.textContent + " " + buton.textContent;
+          wrongChoises.textContent + " " + button.textContent;
       }
 
       oldWordWithLines = newWordWithLines;
@@ -144,10 +146,10 @@
         }
       }
 
-      guessLetter.forEach(buton => {
-        if (buton.textContent === randomLetterFromWord) {
-          buton.disabled = true;
-          buton.style.backgroundImage = "url('./images/empty.png')";
+      guessLetter.forEach(button => {
+        if (button.textContent === randomLetterFromWord) {
+          button.disabled = true;
+          button.style.backgroundImage = "url('./images/empty.png')";
         }
       });
 
@@ -205,15 +207,19 @@
   }
 
   function enableLetterButtons() {
-    guessLetter.forEach(buton => {
-      buton.disabled = false;
-      buton.style.backgroundImage = "";
+    guessLetter.forEach(button => {
+      button.disabled = false;
+      button.style.backgroundImage = "";
     });
   }
 
   function disableLetterButtons() {
-    guessLetter.forEach(buton => {
-      buton.disabled = true;
+    console.log(`a intrat in fct`);
+    console.log(` the buttons are: ${guessLetter}`);
+
+    guessLetter.forEach(button => {
+      button.disabled = true;
+      console.log(` the buttons are: ${button.disabled}`);
     });
   }
 
@@ -223,9 +229,9 @@
       transformWordIntoLines();
       console.log(`randomword este: ${randomWord}`);
 
-      guessLetter.forEach(buton => {
-        buton.disabled = false;
-        buton.style.backgroundImage = "";
+      guessLetter.forEach(button => {
+        button.disabled = false;
+        button.style.backgroundImage = "";
       });
 
       newWordWithLines = [];

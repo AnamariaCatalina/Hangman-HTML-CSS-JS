@@ -60,12 +60,17 @@
   justify-content: center;
 }
 
-.guessLetter {
+.guessLetterFirstRow,
+.guessLetterSecondRow,
+.guessLetterThirdRow {
   display: flex;
   justify-content: center;
+  flex-direction: row;
 }
 
-.guessLetter button {
+.guessLetterFirstRow button,
+.guessLetterSecondRow button,
+.guessLetterThirdRow button {
   width: 70px;
   height: 70px;
   background-color: bisque;
