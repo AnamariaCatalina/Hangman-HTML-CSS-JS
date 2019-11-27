@@ -3,7 +3,7 @@
   const reset = document.querySelector(".reset");
   const hint = document.querySelector(".hint");
   const word = document.querySelector(".word p");
-  const guessLetter = document.querySelectorAll(".letters button"); ///modifica aici ca nu mai merge
+  const guessLetter = document.querySelectorAll(".letters button");
   const image = document.querySelector(".underHangmanImage img");
   const wrongChoises = document.querySelector(".wrongChoisesRow p");
   const score = document.querySelector(".score ");
@@ -26,33 +26,30 @@
 
   let randomWord = ""; // contains a random word from the vector words
 
-  let oldWordWithLines = []; // memorize the sequence of buttons which were pressed in order to count the mistakes
-  let newWordWithLines = [];
   let numberOfWrongLetters = 0; //count how many wrong buttons were pressed in one round
   let correctWordWithLines = "";
   let nrOfPressHintButton = 0; //how many times the hint button has been pressed
   let scoreValue = 0;
-
-  time.textContent = `Timer: 00:00`;
-  duration = 120;
   let interval;
 
   disableLetterButtons();
+  updateTimerContent();
+  hint.disabled = true;
 
   start.addEventListener("click", () => {
     transformWordIntoLines(); //when the start button is pressed, the generated word is transformed into lines and printed on the screen
     console.log(`The word is: ${randomWord}`);
 
-    enableLetterButtons();
+    enableButton(guessLetter);
     hint.disabled = false;
     start.disabled = true;
 
-    image.src = "./images/0.png";
+    updateImage("./images/0.png");
     wrongChoises.textContent = "";
 
     nrOfPressHintButton = 0;
 
-    startTimer(duration);
+    startTimer(120);
   });
 
   guessLetter.forEach(button => {
@@ -74,23 +71,14 @@
       button.disabled = true;
       button.style.backgroundImage = "url('./images/empty.png')";
 
-      if (correctChoise === true) {
-        newWordWithLines = newWordWithLines + button.textContent;
-        oldWordWithLines = oldWordWithLines + button.textContent;
-      } else {
-        newWordWithLines = newWordWithLines + button.textContent;
-      }
+      console.log(`correctChoise :${correctChoise}`);
 
-      if (newWordWithLines !== oldWordWithLines) {
+      if (correctChoise === false) {
+        wrongChoises.textContent += " " + button.textContent;
         numberOfWrongLetters++;
-        wrongChoises.textContent =
-          wrongChoises.textContent + " " + button.textContent;
       }
 
-      oldWordWithLines = newWordWithLines;
-
-      image.src = `./images/${numberOfWrongLetters}.png`;
-
+      updateImage(`./images/${numberOfWrongLetters}.png`);
       checkNumberOfWrongLetters();
       checkWord();
     });
@@ -104,7 +92,8 @@
     start.disabled = false;
     hint.disabled = true;
 
-    image.src = "./images/0.png";
+    updateImage("./images/0.png");
+
     wrongChoises.textContent = "";
     nrOfPressHintButton = 0;
   });
@@ -153,10 +142,10 @@
 
       nrOfPressHintButton++;
 
-      // checkWord();
-
       scoreValue = scoreValue - 2;
-      score.textContent = "Score: " + scoreValue + "  ";
+
+      updateScoreContent("Score: " + scoreValue + "  ");
+      checkWord();
     }
   });
 
@@ -204,8 +193,8 @@
     word.textContent = randomWord;
   }
 
-  function enableLetterButtons() {
-    guessLetter.forEach(button => {
+  function enableButton(buttons) {
+    buttons.forEach(button => {
       button.disabled = false;
       button.style.backgroundImage = "";
     });
@@ -228,15 +217,14 @@
         button.style.backgroundImage = "";
       });
 
-      newWordWithLines = [];
-      oldWordWithLines = [];
       correctChoise = "";
 
       wrongChoises.textContent = "";
-      image.src = "./images/0.png";
+
+      updateImage("./images/0.png");
 
       scoreValue = scoreValue + 3;
-      score.textContent = `Score:` + `${scoreValue}`;
+      updateScoreContent(`Score:` + `${scoreValue}`);
     }
   }
 
@@ -262,26 +250,33 @@
     }
   }
 
-  //restart game
   function restartGame() {
     start.style.display = "";
     word.textContent = "Let's Play!";
 
     hint.disabled = false;
 
-    enableLetterButtons();
-
     randomWord = "";
 
-    newWordWithLines = [];
-    oldWordWithLines = [];
     correctChoise = "";
     numberOfWrongLetters = 0;
 
     scoreValue = 0;
-    score.textContent = "Score: " + `${scoreValue}`;
+    updateScoreContent("Score: " + `${scoreValue}`);
 
     clearInterval(interval);
+    updateTimerContent();
+  }
+
+  function updateTimerContent() {
     time.textContent = `Timer: 00:00`;
+  }
+
+  function updateImage(src) {
+    image.src = src;
+  }
+
+  function updateScoreContent(scoreContent) {
+    score.textContent = scoreContent;
   }
 })();
